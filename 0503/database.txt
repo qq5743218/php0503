@@ -1,0 +1,36 @@
+Create database HomeWork2 default character set 'utf8' collate 'utf8_general_ci';
+
+Create user 'qq5743218'@'localhost' identified by '123456';
+
+grant all privileges on HomeWork2.* to 'qq5743218'@'localhost';
+
+FLUSH PRIVILEGES;
+
+EXIT;
+
+mysql -u qq5743218 -p
+
+use HomeWork2;
+
+create table kanban(
+k_id int unsigned not null auto_increment primary key,
+k_name varchar(10)
+)CHARACTER SET 'utf8' COLLATE 'utf8_general_ci';
+
+create table forum(
+k_id int unsigned not null,
+f_id int unsigned not null auto_increment primary key,
+f_title varchar(20) not null,
+f_content varchar(500),
+f_name varchar(20),
+foreign key(k_id) references kanban(k_id)
+)character set 'utf8' collate 'utf8_general_ci';
+
+create table reply(
+f_id int unsigned not null,
+r_id int unsigned not null auto_increment primary key,
+r_content varchar(100),
+r_name varchar(20),
+foreign key (f_id) references forum(f_id)
+)character set 'utf8' collate 'utf8_general_ci';
+

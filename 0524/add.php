@@ -1,14 +1,14 @@
 <?php
 //error_reporting(0);
-//­×§ï php \ php.ini ¤¤ 702 ¦æ
+//ä¿®æ”¹ php \ php.ini ä¸­ 702 è¡Œ
 // always_populate_raw_post_data = -1
-// ¥i¥HÃö±¼ $HTTP_RAW_POST_DATA °±¥Î°T®§
-// °O±o­nÃö±¼­«¶}php©Îºô­¶¦øªA¾¹
-//¿é¤J=======================================================
-//¹w´Á¦¬¨ìªº¸ê®Æ®æ¦¡  { prod:"°Ó«~ªº¦WºÙ", price:"­È }
+// å¯ä»¥é—œæ‰ $HTTP_RAW_POST_DATA åœç”¨è¨Šæ¯
+// è¨˜å¾—è¦é—œæ‰é‡é–‹phpæˆ–ç¶²é ä¼ºæœå™¨
+//è¼¸å…¥=======================================================
+//é æœŸæ”¶åˆ°çš„è³‡æ–™æ ¼å¼  { prod:"å•†å“çš„åç¨±", price:"å€¼ }
 $data = json_decode(file_get_contents('php://input'));
-//ÀË¬d§Aªº¸ê®Æ. ¼È®É¬Ù²¤
-//¸ê®Æ®w¾Ş§@===================================================
+//æª¢æŸ¥ä½ çš„è³‡æ–™. æš«æ™‚çœç•¥
+//è³‡æ–™åº«æ“ä½œ===================================================
 try {
 	$db = new PDO('mysql:host=localhost;dbname=test0329;charset=utf8'
 		,'mememe','123456', array( 
@@ -18,13 +18,13 @@ try {
 }catch(PDOException $err) {
 	http_response_code(500);
 	echo 'failed';
-	//echo $err->getMessage(); //´ú¸Õªº®É­Ô¥Î
+	//echo $err->getMessage(); //æ¸¬è©¦çš„æ™‚å€™ç”¨
 	exit;
 }
 $stmt = $db->prepare('insert into moneybook (name,cost) values (?,?)');
 $stmt->execute( [ $data->{"prod"}, $data->{"price"} ] );
-//¿é¥X=======================================================
-$data->{"id"} = $db->lastInsertId();  //¨ú±o«e¤@¦¸ insert ªº id
+//è¼¸å‡º=======================================================
+$data->{"id"} = $db->lastInsertId();  //å–å¾—å‰ä¸€æ¬¡ insert çš„ id
 http_response_code(201);
 header("Content-Type: application/json;charset=UTF-8");
-echo json_encode($data);              //§âinsertªº¸ê®Æ¦A¦^¶Çµ¹¥Î¤áºİ
+echo json_encode($data);              //æŠŠinsertçš„è³‡æ–™å†å›å‚³çµ¦ç”¨æˆ¶ç«¯

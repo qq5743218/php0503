@@ -2,7 +2,7 @@
 <html lang="zh_Hant">
 <head>
 	<meta charset="utf-8">
-	<title>¦Cªí</title>
+	<title>åˆ—è¡¨</title>
 	<style type="text/css">
 	
 	
@@ -17,80 +17,159 @@ function hideNode(id){
 	var x = document.getElementById(id);
 	x.style.display = "none";
 }
-//§âªí³æªº¸ê®Æ¡A°e¨ì¦øªA¾¹¤W·s¼WÀx¦s
+//æŠŠè¡¨å–®çš„è³‡æ–™ï¼Œé€åˆ°ä¼ºæœå™¨ä¸Šæ–°å¢å„²å­˜
 function add2Server(){
 	
-	//«Ø¥ß¤@­Ó­nµo°e¨ì¦øªA¾¹ªº¸ê®Æª«¥ó { } JSON
+	//å»ºç«‹ä¸€å€‹è¦ç™¼é€åˆ°ä¼ºæœå™¨çš„è³‡æ–™ç‰©ä»¶ { } JSON
 	var data = {
 		prod: document.getElementById("prod").value,
 		price: document.getElementById("price").value
 	};
 	//console.log( data );
 	
-	// AJAX½Ğ¨D
+	// AJAXè«‹æ±‚
 	var xhr = new XMLHttpRequest();
-	xhr.open("POST", "add.php");    //µo°e¹ï¶H add.php
+	xhr.open("POST", "add.php");    //ç™¼é€å°è±¡ add.php
 	xhr.setRequestHeader("Content-Type","application/json;charset=UTF-8");
 	xhr.onreadystatechange = function(){
-		if( this.readyState == 4 ){ //¦^¶Çµ²§ô¤F
-			if( this.status == 201 ){ //¥¿½T
-				console.log( this.responseText ); //¤£°µ¥ô¦ó³B²z
-				//insert2List(????);  //·s¼W¨ìlist
+		if( this.readyState == 4 ){ //å›å‚³çµæŸäº†
+			if( this.status == 201 ){ //æ­£ç¢º
+				//console.log( this.responseText ); //ä¸åšä»»ä½•è™•ç†
+				insert2List( JSON.parse(this.responseText) );  //æ–°å¢åˆ°list
 				hideNode("edit_form");
 				showNode("show_add_btn");
-			}else{ //¿ù»~
-				console.log( this.responseText ); //¤£°µ¥ô¦ó³B²z
-				alert('·s¼W¥¢±Ñ');
+			}else{ //éŒ¯èª¤
+				console.log( this.responseText ); //ä¸åšä»»ä½•è™•ç†
+				alert('æ–°å¢å¤±æ•—');
 			}
 		}
 	};
 	xhr.send( JSON.stringify(data) );
 }
 //--------------------------------------------------
-//§â¤@µ§¸ê®Æ¥[¨ì²M³æªí®æ¤¤
+//å–å¾—é ç«¯çš„è³‡æ–™è¡¨
+
+function getList(){
+	//AJAXè«‹æ±‚
+	var xhr = new XMLHttpRequest();
+	xhr.open("GET","list.php");
+	xhr.onreadystatechange = function(){
+		if( this.readyState == 4){
+			if ( this.status == 200){
+				var all = JSON.parse(this.responseText);
+				//for(var i=all.length-1;i>=0;i--) æ•ˆç‡æ¯”è¼ƒå¥½
+				for(var i=0; i<all.length; i++){
+					insert2List( all[i] );
+				}
+			}else{
+				console.log( this.responseText ); //ä¸åšä»»ä½•è™•ç†
+			}
+		}
+	};
+	xhr.send();
+}
+//--------------------------------------------------
+//æŠŠä¸€ç­†è³‡æ–™åŠ åˆ°æ¸…å–®è¡¨æ ¼ä¸­
+//{"prod":"5","price":"r","id":"13"}
 function insert2List( data ){
+	var tb1 = document.getElementById("list");
+	
+	var row = tb1.insertRow( tb1.rows.length );
+	var ce1,ce2,ce3;
+	ce1 = row.insertCell(0);
+	ce2 = row.insertCell(1);
+	ce3 = row.insertCell(2);
+	
+	
+	ce1.appendChild( document.createTextNode(data.prod));
+	ce2.appendChild( document.createTextNode(data.price));
+	
+	var btn1,btn2;
+	btn1 = document.createElement("button");
+	btn1.setAttribute('t_id',data.id);
+	btn1.addEventListener('click',del_click);
+	btn1.appendChild( document.createTextNode("åˆªé™¤"));
+	
+	btn2 = document.createElement("button");
+	btn2.setAttribute('t_id',data.id);
+	btn2.appendChild( document.createTextNode("ä¿®æ”¹"));
+	
+	ce3.appendChild( btn1 );
+	ce3.appendChild( btn2 );
+	
+//-----------------------------------------------------------
+//åˆªé™¤æŒ‰éˆ•çš„å‹•ä½œ
+function del_click( ev ){
+	//ç¢ºèªèª°è¢«é»äº†åˆªé™¤ ev.target
+	//å»ºç«‹ä¸€å€‹è¦ç™¼é€åˆ°ä¼ºæœå™¨çš„è³‡æ–™ç‰©ä»¶ { }JSON
+	var data = {
+		id : ev.target.getAttribute('t_id')
+	};
+	console.log( data.id );
+	
+	// AJAXè«‹æ±‚
+	var xhr = new XMLHttpRequest();
+	xhr.open("POST", "del.php");    //ç™¼é€å°è±¡ add.php
+	xhr.setRequestHeader("Content-Type","application/json;charset=UTF-8");
+	xhr.onreadystatechange = function(){
+		if( this.readyState == 4 ){ //å›å‚³çµæŸäº†
+			if( this.status == 200 ){ //æ­£ç¢º
+				//console.log( this.responseText ); //ä¸åšä»»ä½•è™•ç†
+				//å¾ç•«é¢ä¸ŠæŠŠåˆªé™¤çš„è³‡æ–™æ‹¿æ‰ 0524 å°‘äº†del.php ä¸‹æ¬¡è¨˜å¾—åš  è¶•è‘—ä¸Šç­
+				//?????
+				//???
+			}else{ //éŒ¯èª¤
+				console.log( this.responseText ); //ä¸åšä»»ä½•è™•ç†
+				alert('åˆªé™¤å¤±æ•—');
+			}
+		}
+	};
+	xhr.send( JSON.stringify(data) );
+}
 }
 	</script>
 </head>
 <body>
 
-	<button id="show_add_btn">·s¼W</button>
+	<button id="show_add_btn">æ–°å¢</button>
 
 	<table id="list">
 	</table>
 	
 	<div id="edit_form">
 		<input type="hidden" id="ppid">
-		½Ğ¿é¤J°Ó«~¡G<input type="text" id="prod">
-		ª÷ÃB¡G<input type="text" id="price">
-		<button id="add_btn">·s¼W</button>
-		<button id="update_btn">Àx¦s½s¿è</button>
-		<button id="cancel_btn">¨ú®ø</button> 
+		è«‹è¼¸å…¥å•†å“ï¼š<input type="text" id="prod">
+		é‡‘é¡ï¼š<input type="text" id="price">
+		<button id="add_btn">æ–°å¢</button>
+		<button id="update_btn">å„²å­˜ç·¨è¼¯</button>
+		<button id="cancel_btn">å–æ¶ˆ</button> 
 	</div>
 
 	<script type="text/javascript">
 (function() {
-	//¹w³]ÁôÂÃ½s¿èªí³æ
+	//é è¨­éš±è—ç·¨è¼¯è¡¨å–®
 	hideNode("edit_form");
 	var x;
-	//³]©wÂIÀ»¡u·s¼W¡v«ö¶s®Éªº°Ê§@(Åã¥Ü·s¼Wªº½s¿èªí³æ)
+	//è¨­å®šé»æ“Šã€Œæ–°å¢ã€æŒ‰éˆ•æ™‚çš„å‹•ä½œ(é¡¯ç¤ºæ–°å¢çš„ç·¨è¼¯è¡¨å–®)
 	x = document.getElementById("show_add_btn");
 	x.addEventListener("click", function() {
 		showNode("edit_form");
 		hideNode("update_btn");
 		hideNode("show_add_btn");
 	});
-	//³]©wÂIÀ»¡u¨ú®ø¡v«ö¶s®Éªº°Ê§@
+	//è¨­å®šé»æ“Šã€Œå–æ¶ˆã€æŒ‰éˆ•æ™‚çš„å‹•ä½œ
 	var y;
 	y = document.getElementById("cancel_btn");
 	y.addEventListener("click", function() {
 		hideNode("edit_form");
 		showNode("show_add_btn");
 	});
-	//³]©wÂIÀ»¡u·s¼W¡v¨ì¸ê®Æ®w«ö¶s®Éªº°Ê§@
+	//è¨­å®šé»æ“Šã€Œæ–°å¢ã€åˆ°è³‡æ–™åº«æŒ‰éˆ•æ™‚çš„å‹•ä½œ
 	document.getElementById("add_btn")
 			.addEventListener("click", add2Server);
 	
+	//å–å¾—é ç«¯çš„è³‡æ–™è¡¨
+	getList();
 })();
 	</script>
 </body>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh_Hant">
+<head>
+	<meta charset="utf-8">
+	<title>列表</title>
+	<style type="text/css">
+	
+	
+	
+	</style>
+	<script type="text/javascript">
+function showNode(id){
+	var x = document.getElementById(id);
+	x.style.display = "";
+}
+function hideNode(id){
+	var x = document.getElementById(id);
+	x.style.display = "none";
+}
+//把表單的資料，送到伺服器上新增儲存
+function add2Server(){
+	
+	//建立一個要發送到伺服器的資料物件 { } JSON
+	var data = {
+		prod: document.getElementById("prod").value,
+		price: document.getElementById("price").value
+	};
+	//console.log( data );
+	
+	// AJAX請求
+	var xhr = new XMLHttpRequest();
+	xhr.open("POST", "add.php");    //發送對象 add.php
+	xhr.setRequestHeader("Content-Type","application/json;charset=UTF-8");
+	xhr.onreadystatechange = function(){
+		if( this.readyState == 4 ){ //回傳結束了
+			if( this.status == 201 ){ //正確
+				console.log( this.responseText ); //不做任何處理
+				//insert2List(????);  //新增到list
+				hideNode("edit_form");
+				showNode("show_add_btn");
+			}else{ //錯誤
+				console.log( this.responseText ); //不做任何處理
+				alert('新增失敗');
+			}
+		}
+	};
+	xhr.send( JSON.stringify(data) );
+}
+//--------------------------------------------------
+//把一筆資料加到清單表格中
+function insert2List( data ){
+}
+	</script>
+</head>
+<body>
+
+	<button id="show_add_btn">新增</button>
+
+	<table id="list">
+	</table>
+	
+	<div id="edit_form">
+		<input type="hidden" id="ppid">
+		請輸入商品：<input type="text" id="prod">
+		金額：<input type="text" id="price">
+		<button id="add_btn">新增</button>
+		<button id="update_btn">儲存編輯</button>
+		<button id="cancel_btn">取消</button> 
+	</div>
+
+	<script type="text/javascript">
+(function() {
+	//預設隱藏編輯表單
+	hideNode("edit_form");
+	var x;
+	//設定點擊「新增」按鈕時的動作(顯示新增的編輯表單)
+	x = document.getElementById("show_add_btn");
+	x.addEventListener("click", function() {
+		showNode("edit_form");
+		hideNode("update_btn");
+		hideNode("show_add_btn");
+	});
+	//設定點擊「取消」按鈕時的動作
+	var y;
+	y = document.getElementById("cancel_btn");
+	y.addEventListener("click", function() {
+		hideNode("edit_form");
+		showNode("show_add_btn");
+	});
+	//設定點擊「新增」到資料庫按鈕時的動作
+	document.getElementById("add_btn")
+			.addEventListener("click", add2Server);
+	
+})();
+	</script>
+</body>
+</html>
